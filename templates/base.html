@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>healer</title>
+    <meta name="keywords" content="个人博客" />
+    <meta name="description" content="博客" />
+    <link rel="stylesheet" href="/static/css/font/base.css">
+    <!--<script src="/static/js/modernizr.js"></script>-->
+    <!--<script src="/static/js/scrollReveal.js"></script>-->
+    {% block header %}   {% end %}
+</head>
+<body>
+<header>
+    <div class="logo" data-scroll-reveal="enter right over 1s"><a href="/">
+        <!--<img src="/static/images/font/logo.png">-->
+        <p class="logo-t">healer&amp;博客</p>
+    </a>
+    </div>
+    <nav class="topnav" data-scroll-reveal="enter bottom over 1s after 1s">
+        <a href="index.html"><span>首页</span><span class="en">Home</span></a>
+        <a href="about.html"><span>关于我</span><span class="en">About</span></a>
+        <a href="manshenghuo.html"><span>慢生活</span><span class="en">Life</span></a>
+        <a href="learn.html"><span>碎言碎语</span><span class="en">Doing</span></a>
+        <a href="mbfx.html"><span>模板分享</span><span class="en">Share</span></a>
+        <a href="learn.html"><span>学无止境</span><span class="en">Learn</span></a>
+        <a href="gbook.html"><span>留言</span><span class="en">Saying</span></a>
+        <a href="/user/login"><span>管理員</span><span class="en">Saying</span></a>
+        <div class="top-login">
+            <a href="/login"><span>登录</span><span class="en">Learn</span></a>
+            <a href="gbook.html"><span>注册</span><span class="en">Saying</span></a>
+        </div>
+    </nav>
+</header>
+<article>
+    <div class="container">
+        {% block container %}   {% end %}
+
+    </div>
+</article>
+<footer>
+    Design by DanceSmile <a href="/">蜀ICP备11002373号-1</a>
+</footer>
+<script>
+    if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))){
+        (function(){
+            window.scrollReveal = new scrollReveal({reset: true});
+        })();
+    };
+</script>
+</body>
+</html>

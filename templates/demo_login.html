@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta name="keywords" content="SDN,sdn,监控,基于SDN的监控">
+		<meta name="description" content="基于SDN的监控">
+		<meta name="robots" content="all" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<title>极互科技-用户登录</title>
+		<link rel="stylesheet" href="/static/css/sdn.css">
+		<link rel="icon" href="/static/images/icon.png" type="image/x-icon">
+		<style type="text/css">
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			body {
+				background: #f5f6f7;
+				box-sizing: border-box;
+				font-family: Microsoft Yahei, Arial, Helvetica, sans-serif;
+			}
+
+			#container {
+				width: 380px;
+				margin: 85px auto;
+				background: white;
+				box-shadow: 0px 0px 1px 1px lightgrey;
+			}
+
+			ul {
+				list-style: none;
+				width: 100%;
+				text-align: center;
+				color: orange
+			}
+
+			li {
+				display: inline-block;
+				width: 187px;
+				font-size: 17px;
+				padding: 10px 0px;
+			}
+
+			li:first-child {
+				background: #56afe1;
+				box-shadow: 1px 0px 2px 1px lightgrey;
+				color: white;
+			}
+
+			div#pic {
+				position: absolute;
+				left: 20px;
+				top: 18px;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			#container>div {
+				text-align: center;
+			}
+
+			#container>div #form {
+				margin: 40px auto;
+				font-size: 16px;
+			}
+
+			input {
+				width: 200px;
+				height: 30px;
+				margin-bottom: 30px;
+				border-radius: 3px;
+				border: 1px solid lightgrey;
+				font-size: 13px;
+				box-shadow: 0px 0px 1px 1px lightblue;
+				padding-left: 5px;
+			}
+
+			input:last-child {
+				background: #65c17a;
+				width: 180px;
+				font-size: 16px;
+				color: white;
+				box-shadow: none;
+				cursor: pointer
+			}
+
+            input[type='password']{
+                font-size: 9px;
+            }
+
+			#form label{
+				font-size: 15px;
+			}
+
+			#footer {
+				width: 100%;
+				min-height: 45px;
+				color: grey;
+				font-size: 13px;
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			#footer p {
+				margin: 30px auto 0px;
+			}
+
+			#embed-captcha {
+				width: 300px;
+				margin: 0 auto;
+			}
+
+			.show {
+				display: block;
+			}
+
+			.hide {
+				display: none;
+			}
+
+			#notice {
+				color: red;
+			}
+			/* 以下遮罩层为demo.用户可自行设计实现 */
+
+			#mask {
+				display: none;
+				position: fixed;
+				text-align: center;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				overflow: auto;
+			}
+			/* 可自行设计实现captcha的位置大小 */
+
+			.popup-mobile {
+				position: relative;
+			}
+
+			#popup-captcha-mobile {
+				position: fixed;
+				display: none;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				-webkit-transform: translate(-50%, -50%);
+				z-index: 9999;
+			}
+
+			@media (min-height:800px) {
+				#container {
+					margin-top: 120px;
+				}
+				#footer {
+					position: absolute;
+					bottom: 60px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="pic">
+			<a href="/first_page"><img src="/static/images/whitebg.png" width="115px" height="35px"></a>
+		</div>
+		<div id="container">
+			<ul>
+				<li>主账户登录</li>
+				<li>子账户登录</li>
+			</ul>
+			<div>
+				<form action="/user/demo_login" id="form" method="post">
+					<label for="username">邮箱&nbsp;&nbsp;&nbsp;&nbsp;</label><input type="email" id="username" name="user_email" value="demo@geehoo.net" readonly="readonly"><br/>
+					<label for="childuser">用户&nbsp;&nbsp;&nbsp;&nbsp;</label><input type="password" id="childuser" name="sub_account" value="read" readonly="readonly"><br/>
+					<label for="password">密码&nbsp;&nbsp;&nbsp;&nbsp;</label><input type="password" id="password" name="password" value="336ebbb2179beaa7340a4f1620f3af40" readonly="readonly"><br/>
+					<div id="embed-captcha"></div>
+					<p id="wait" class="show">正在加载验证码......</p>
+					<p id="notice" class="hide">请先拖动验证码到相应位置</p>
+					<br/>
+					<input type="submit" id="submit" value="登 录">
+				</form>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p>&copy; Copyright 2016-2017 西安极互云网络科技有限公司 陕ICP备17006213号-1</p>
+		</div>
+	</body>
+	<script src="https://static.geetest.com/static/tools/gt.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/geehoo_md5.js"></script>
+	<script src="/static/js/demo_login.js"></script>
+</html>
