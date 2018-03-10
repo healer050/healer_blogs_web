@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="robots" content="all"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <!--<title>极互科技-{{ title }}</title>-->
+    <link rel="icon" href="/static/images/icon.png" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/static/css/skins/blue/skin.css"/>
+    <link href="/static/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet"c href="/static/css/sdn.css">
+    <link rel="stylesheet" href="/static/css/style_myy.css"/>
+    <link rel="stylesheet" href="/static/css/zeroModal.css">
+    {% block header %}{% end %}
+</head>
+<body>
+<div>
+    <input type="hidden" value="{{ permission }}" id="personal_permission">
+</div>
+<div class="layout-admin">
+    <header class="layout-header col-md-12">
+        <span class="header-logo">极互IDC服务平台</span>
+        <a class="layout-side-arrow"  href="javascript:"><span class="icon-font">&#xe621;</span> 导航</a>
+        <a class="header-menu-btn" href="javascript:;"><i class="icon-font">&#xe600;</i></a>
+        <ul class="header-bar">
+            <li class="header-bar-role"><a href="javascript:;">{{ user_type }}</a></li>
+            <li class="header-bar-nav">
+                <a href="javascript:;">{{ idc_info["selected_idc"][1] }}<i class="icon-font" style="margin-left:5px;">&#xe60c;</i></a>
+                <ul class="header-dropdown-menu" id="idc_ul" style="width:180%">
+                    {% for idc in idc_info["idcs"] %}
+                    <li><a id="{{ idc[0] }}">{{ idc[1] }}</a></li>
+                    {% end %}
+                </ul>
+            </li>
+            <li class="header-bar-nav">
+                <a href="javascript:;">{{ username}}<i class="icon-font" style="margin-left:5px;">&#xe60c;</i></a>
+                <ul class="header-dropdown-menu" id="old_ul">
+                    {% if subAccount %}
+                    <li><a href="/password">修改主账号密码</a></li>
+                    <li><a href="/subAccount">账号管理</a></li>
+                    {% end %}
+                    <li><a href="/user/logout">&nbsp;&nbsp;退出&nbsp;&nbsp;</a></li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+    <aside class="layout-side" id="layout-aside">
+        <ul class="side-menu">
+            <li class="menu-item hidden" id="iplist"><a href="/ip">
+                <i class="icon-font">&#xe690;</i><span>文章管理</span></a></li>
+            <li class="menu-item hidden" id="tenantlist"><a href="/tenant">
+                <i class="icon-font">&#xe620;</i><span>评论管理</span></a></li>
+            <li class="menu-item hidden" id="tenant-manage"><a href="/tenant_manage">
+                <i class="icon-font">&#xea2d;</i><span>留言管理</span></a></li>
+            <li class="menu-item hidden" id="idc-system"><a href="/idcsystem">
+                <i class="icon-font">&#xe74b;</i><span>用户管理</span></a></li>
+            <li class="menu-item hidden" id="version"><a href="/version">
+                <i class="icon-font">&#xe623;</i><span>版本信息</span></a></li>
+        </ul>
+    </aside>
+    <section class="layout-main">
+        <div class="layout-main-body" id="main-content">
+            {% block content %}
+            {% end %}
+        </div>
+    </section>
+    <div class="layout-footer">©2016-2017 西安极互云网络科技有限公司 版权所有 陕ICP备17006213号-1</div>
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/sdn.js"></script>
+<script type="text/javascript" src="/static/js/sdn-util.js"></script>
+<script type="text/javascript" src="/static/js/sdn-appearance.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/zeroModal.min.js"></script>
+<script src="/static/js/base.js"></script>
+<script src="/static/js/alert.min.js"></script>
+{% block footjs %}{% end %}
+</body>
+</html>

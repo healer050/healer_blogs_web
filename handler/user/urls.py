@@ -5,8 +5,7 @@ from user_handlers import LoginHandle, LogoutHandle, PcGetCaptchaHandler, DemoHa
 from password_handlers import ModifyPasswordHandler
 
 url = [
-    # (r"/login", LoginHandle),
-    (r"*", LoginHandle),
+    (r"/login", LoginHandle),
     (r"/logout", LogoutHandle),
     (r"/geetest/register", PcGetCaptchaHandler),
     (r"/password/modify", ModifyPasswordHandler),

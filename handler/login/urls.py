@@ -2,7 +2,7 @@ from handler import Handler,LoginHandler,DemoLoginHandler
 
 
 url = [
-    (r"/index", Handler),
+    (r"*", Handler),
     (r"login",LoginHandler),
     (r"d/login",DemoLoginHandler),
 
