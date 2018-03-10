@@ -14,4 +14,4 @@ class LoginHandler(BaseHandler):
 class DemoLoginHandler(BaseHandler):
 
     def get(self):
-        self.render("login.html")
+        self.render("demo_login.html")

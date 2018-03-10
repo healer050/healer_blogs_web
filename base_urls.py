@@ -12,7 +12,7 @@ def CreateUrl(raw_url):
     return url
 
 raw_url = [
-    (r"/", login_url),
-    (r"/user", user_url),
+    (r"/healer", login_url),
+    (r"/", user_url),
 ]
 url = CreateUrl(raw_url)
