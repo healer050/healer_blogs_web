@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 import uuid,base64
-from models.admin_models import CmsUsers
-# from libs.db.dbsession import dbSession
-
 
 
 

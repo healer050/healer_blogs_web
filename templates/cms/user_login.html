@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="robots" content="all" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>用户登录</title>
+    <link rel="stylesheet" href="/static/css/sdn.css">
+    <link rel="stylesheet" href="/static/css/sdn_style.css" />
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/user_login.css" />
+</head>
+<body>
+<div id="pic">
+    <a><img src="#" width="115px" height="35px"></a>
+</div>
+<div id="container">
+    <div id="nav">
+        <a href="javascript:void(0)">主账户登录</a><span class="line"></span><a href="javascript:void(0)">子账户登录</a>
+    </div>
+    <div>
+        <form action="/cms/login?next={{ next_url }}" id="form" method="post">
+            <div class="outer-div">
+                <span class="icon-font" title="邮箱">&#xe624;</span>
+                <input type="text" id="username" name="user_email" placeholder='邮箱'>
+            </div>
+            <div class="outer-div hidden">
+                <span class="icon-font" title="子账号">&#xe6db;</span>
+                <input type="text" id="childuser" name="sub_account" placeholder='子账号'>
+            </div>
+            <div class="outer-div">
+                <span class="icon-font" title="密码">&#xe692;</span>
+                <input type="password" id="password" name="password" placeholder='密码'>
+            </div>
+            <p id="login_tip">
+                <i class="icon-font" style="color:orange">&#xe611;</i><span></span>
+            </p>
+            {% if msg %}
+            <p id="error">
+                <i class="icon-font" style="color:orange">&#xe611;</i><span>{{ msg }}</span>
+            </p>
+            {% end %}
+            <div id="embed-captcha"></div>
+            <div id="wait" class="show">
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+            </div>
+            <p id="notice" class="hide">请先拖动验证码到相应位置</p>
+            <br/>
+            <input type="submit" id="submit" value="登 录">
+        </form>
+    </div>
+</div>
+<div id="footer">
+    <p>©2016-2017 西安极互云网络科技有限公司 版权所有 陕ICP备17006213号-1</p>
+</div>
+</body>
+<script src="https://static.geetest.com/static/tools/gt.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/geehoo_md5.js"></script>
+<script src="/static/js/user_login.js"></script>
+<script src="/static/js/geetest_code.js"></script>
+</html>

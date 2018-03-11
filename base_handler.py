@@ -1,19 +1,4 @@
 # -*- coding: utf-8 -*-
-# from tornado import web
-# import json
-#
-#
-# class BaseHandler(web.RequestHandler):
-#     #初始化配置
-#     def write_response(self, response, _status=1, _err=''):
-#         self.set_header('Content-type', 'application/json')
-#         _response = {
-#             "success": _status,
-#             "data": response,
-#             "err_msg": _err
-#         }
-#         self.write(json.dumps(_response))
-#         self.finish()
 
 import json
 from tornado_session.sessionhandler import SessionBaseHandler
@@ -39,7 +24,7 @@ class BaseHandler(SessionBaseHandler):
         if status_code == 404:
             self.render('404.html')
         elif status_code == 500:
-            self.render('500.html')
+            self.write('error:' + str(status_code))
         else:
             self.write('error:' + str(status_code))
 

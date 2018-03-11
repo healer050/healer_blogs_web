@@ -1,8 +1,5 @@
 # -*- coding:utf-8 -*-
-from handler.login.urls import  url as index_url
-from handler.user.urls import url as user_url
-from handler.pages.urls import url as pages_url
-from handler.essay_manage.urls import url as  essay_url
+from handler.cms.cms_handlers import CmsIndexHandler,LoginHandler,PcGetCaptchaHandler,LogoutHandler
 def CreateUrl(raw_url):
     url = []
     for i in raw_url:
@@ -14,9 +11,9 @@ def CreateUrl(raw_url):
     return url
 
 raw_url = [
-    (r"/", index_url),
-    (r"/user", user_url),
-    (r"/e", essay_url),
-    (r"", pages_url),
+    (r"/cms/",CmsIndexHandler),
+    (r"/cms/login",LoginHandler),
+    (r"/cms/geetest/register",PcGetCaptchaHandler),
+    (r"/cms/logout",LogoutHandler),
 ]
 url = CreateUrl(raw_url)

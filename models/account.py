@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from pymongo import MongoClient
 import pymongo
-from config import MongodbHost, MongodbPort, MongodbUser, MongodbPassword, MongodbAuthDb,  MongoBasicInfoDb, USER_NAME_COLLECTION, PERMISSION_NAME_COLLECTION, OPEN_ID_COLLECTION, MONGO_USE_RS, MONGO_RS_HOST_PORT
+from config import MongodbHost, MongodbPort, MongodbUser, MongodbPassword, MongodbAuthDb,  MongoBasicInfoDb, USER_NAME_COLLECTION, PERMISSION_NAME_COLLECTION, OPEN_ID_COLLECTION, ADMIN_SALT
 import string
 from utils.tools import to_unicode,to_string
-from utils.hashers import make_password
+import hashlib
 from utils.check import check_role_name
 
 
@@ -35,6 +35,7 @@ class BaseAccount(object):
         return Account(open_id_doc['main_account_id'], open_id_doc['subaccount_id'])
 
 
+
 class Account(BaseAccount):
     def __init__(self, main_account_id, subaccount_id=None):
         super(Account, self).__init__()
@@ -49,44 +50,15 @@ class Account(BaseAccount):
         self.main_account_id = main_account_id
         self.subaccount_id = subaccount_id
         if self.is_main_account:
-            self.superior_accounts_id = [self.main_account_id]
-        else:
             self.superior_accounts_id = []
+        else:
+            self.superior_accounts_id = [self.main_account_id]
         self.all_subaccounts = []
         self.subordinate_accounts_id = []
         self.document = {}
         self._set_account_info()
         self.role = to_string(self.document.get("role", ""))
-        self.group = to_string(self.document.get("group", ""))
         self.own_roles = self.document.get("own_roles", [])
-
-
-
-    def _get_account_info_recursively(self, superior_account_id, subaccounts):
-        """
-        递归查询到指定的子账户，设置对象的属性
-        :param superior_account_id:
-        :param subaccounts:
-        :return:
-        """
-        if subaccounts.has_key(self.subaccount_id):
-            self.document = subaccounts[self.subaccount_id]
-            # self.alert_group = to_string(self.document["alertGroup"], True)
-            self.status = to_string(self.document["status"], True)
-            self.tel = to_string(self.document["tel"], True)
-            self.email = to_string(self.document["user_email"], True)
-            self.account_name = to_string(self.document["user_name"], True)
-
-            self.direct_superior_account_id = superior_account_id
-
-            return True
-        else:
-            for subaccount_id in subaccounts:
-                ret = self._get_account_info_recursively(subaccount_id,
-                                                         subaccounts[subaccount_id].get("subaccount", {}))
-                if not ret is None:
-                    self.superior_accounts_id.insert(1, to_string(subaccount_id))
-                    return ret
 
     def _set_account_info(self):
         """
@@ -103,13 +75,37 @@ class Account(BaseAccount):
                 raise AccountNotExistError("subaccount does not exist")
             elif self.is_main_account:
                 self.document = doc
-                self.alert_group = doc["alertGroup"]
+
                 self.status = to_string(doc["status"], True)
                 self.tel = to_string(doc["tel"], True)
                 self.email = to_string(doc["user_email"], True)
                 self.account_name = to_string(doc["user_name"], True)
                 self.own_roles = to_string(doc["own_roles"], True)
                 self._traversal_account_tree(doc)
+
+    def _get_account_info_recursively(self, superior_account_id, subaccounts):
+        """
+        递归查询到指定的子账户，设置对象的属性
+        :param superior_account_id:
+        :param subaccounts:
+        :return:
+        """
+        if subaccounts.has_key(self.subaccount_id):
+            self.document = subaccounts[self.subaccount_id]
+            self.status = to_string(self.document["status"], True)
+            self.tel = to_string(self.document["tel"], True)
+            self.email = to_string(self.document["user_email"], True)
+            self.account_name = to_string(self.document["user_name"], True)
+            self.direct_superior_account_id = superior_account_id
+            self._traversal_account_tree(subaccounts[self.subaccount_id])
+            return True
+        else:
+            for subaccount_id in subaccounts:
+                ret = self._get_account_info_recursively(subaccount_id,
+                                                         subaccounts[subaccount_id].get("subaccount", {}))
+                if not ret is None:
+                    self.superior_accounts_id.insert(1, to_string(subaccount_id))
+                    return ret
 
     def _traversal_account_tree(self, account_tree):
         """
@@ -118,7 +114,7 @@ class Account(BaseAccount):
         :return:
         """
         self.subordinate_accounts_id += map(to_string, account_tree.get('subaccount', {}).keys())
-        subs = [[sub, account_tree['subaccount'][sub]['user_name'], account_tree['subaccount'][sub]['role'], account_tree['subaccount'][sub]['group']] for sub in account_tree.get("subaccount", {})]
+        subs = [[sub, account_tree['subaccount'][sub]['user_name'], account_tree['subaccount'][sub]['role']] for sub in account_tree.get("subaccount", {})]
         self.all_subaccounts += subs
         if account_tree.has_key("subaccount"):
             for subordinate_account in account_tree['subaccount'].values():
@@ -127,12 +123,13 @@ class Account(BaseAccount):
     def add_subaccount(self, subaccount_id, password, alertGroup, permission, role, tel, user_email, user_name,
                        group=None, wechat_id=None, status=True, direct_superior_account_id=None):
         subaccount_id = to_string(subaccount_id, True)
-        password = make_password(password)
+        password = hashlib.md5(password + ADMIN_SALT).hexdigest()
         role = to_string(role, True)
         tel = to_string(tel, True)
         user_email = to_string(user_email, True)
         user_name = to_string(user_name, True)
         status = bool(status)
+
         local_account_info = {
             "password": password,
             "role": role,
@@ -298,14 +295,10 @@ class Account(BaseAccount):
                 'own_roles.{0}'.format(role_name): {
                     'type': 'set',
                     'own_groups': {
-                        '{0}组长'.format(role_name): {
-                            'rank': 3,
-                            'type': 'preset'
-                        },
-                        '{0}组员'.format(role_name): {
-                            'rank': 4,
-                            'type': 'preset'
-                        },
+                        '其它': {
+                            'rank': 1,
+                            'type': 'set'
+                        }
                     }
                 }
             }
@@ -316,15 +309,16 @@ class Account(BaseAccount):
             return False, "添加失败"
 
     def modify_role_name(self, old_name, new_name):
+        old_name = to_string(old_name)
         user_coll = self._user_collection
         own_roles = self.own_roles
         if not own_roles:
             return False, '不存在角色字段'
         if not check_role_name(new_name):
             return False, '角色名称不符合规定'
-        if not own_roles.has_key(old_name):
-            return False, '角色不存在'
-        if old_name in ['管理', '教师', '学生']:
+        # if not own_roles.has_key(old_name):
+        #     return False, '角色不存在'
+        if old_name in ['管理','教师','学生']:
             return False, '不能修改内置角色名称'
 
         res = user_coll.update_one({'_id': self.main_account_id}, {
@@ -340,14 +334,15 @@ class Account(BaseAccount):
     def del_role(self, role_name):
         user_coll = self._user_collection
         own_roles = self.own_roles
+        role_name = to_string(role_name)
         if not own_roles:
             return False, '不存在角色字段'
         if not check_role_name(role_name):
             return False, '角色名称不符合规定'
-        if role_name in [u'管理', u'教师', u'学生']:
+        if role_name in ['管理','教师','学生']:
             return False, '内置角色不许删除'
-        if role_name not in own_roles.keys():
-            return False, '不存在的角色信息'
+        # if role_name not in own_roles.keys():
+        #     return False, '不存在的角色信息'
         res = user_coll.update_one({'_id': self.main_account_id}, {
             '$unset': {
                 'own_roles.{0}'.format(role_name): ''
@@ -365,8 +360,8 @@ class Account(BaseAccount):
             return False, '不存在角色字段'
         if not (check_role_name(group_name) and check_role_name(role_name)):
             return False, '角色名称或分组名称不符合规定'
-        if role_name not in own_roles.keys():
-            return False, '不存在的角色'
+        # if role_name not in own_roles.keys():
+        #     return False, '不存在的角色'
         group_doc = own_roles[role_name].get(group_name, '')
         if group_doc:
             return False, '分组信息已存在'
@@ -457,8 +452,6 @@ class Account(BaseAccount):
         else:
             return False, '修改分组失败'
 
-
-
     def modify_subaccount(self, subaccount_id, modify_args):
         assert isinstance(modify_args, dict)
         subaccount_to_be_modified = Account(self.main_account_id, subaccount_id)
@@ -467,14 +460,7 @@ class Account(BaseAccount):
         modify_dict = {}
         if modify_args.has_key("status"):
             modify_dict["status"] = modify_args["status"]
-        if modify_args.has_key("alertGroup"):
-            alertGroup = modify_args["alertGroup"]
-            alertGroup = {
-                "warn": bool(alertGroup["warn"]),
-                "info": bool(alertGroup["info"]),
-                "critical": bool(alertGroup["critical"])
-            }
-            modify_dict["alertGroup"] = alertGroup
+
         if modify_args.has_key("role"):
             role = to_string(modify_args["role"], True)
             if role == '管理':
@@ -576,76 +562,6 @@ class Account(BaseAccount):
                                                            insert=insert, **subaccount_info)
             return ret
 
-    def del_group_for_role(self, role_name, group_name):
-        user_coll = self._user_collection
-        own_roles = self.own_roles
-        if not own_roles:
-            return False, '不存在角色字段'
-        if not (check_role_name(group_name) and check_role_name(role_name)):
-            return False, '角色名称或分组名称不符合规定'
-        if role_name not in own_roles.keys():
-            return False, '不存在的角色'
-        if group_name in ['组长组', '组员组']:
-            return False, '内置分组不许删除'
-        group_doc = own_roles[role_name]['own_groups'].get(group_name, '')
-        if not group_doc:
-            return False, '分组信息不存在'
-
-        res = user_coll.update_one({'_id': self.main_account_id}, {
-            '$unset': {
-                'own_roles.{0}.own_groups.{1}'.format(role_name, group_name): ''
-            }
-        })
-        if res.modified_count or res.matched_count:
-            return True, ""
-        else:
-            return False, '删除分组失败'
-
-    def modify_group_for_role(self, role_name, old_group_name, new_group_name, rank):
-        user_coll = self._user_collection
-        own_roles = self.own_roles
-        if not own_roles:
-            return False, '不存在角色字段'
-        if not (check_role_name(new_group_name) and check_role_name(role_name)):
-            return False, '角色名称或分组名称不符合规定'
-        if role_name not in own_roles.keys():
-            return False, '不存在的角色'
-        if new_group_name in ['组长组', '组员组']:
-            return False, '内置分组不许修改'
-        group_doc = own_roles[role_name]['own_groups'].get(old_group_name, '')
-        if not group_doc:
-            return False, '分组信息不存在'
-        if not isinstance(rank, int):
-            return False, '级别参数不合理'
-        if not (1 < rank < 10):
-            return False, '级别值参数须在1-10之间'
-        exist_ranks = [own_roles[role_name]['own_groups'][group]['rank'] for group in
-                       own_roles[role_name]['own_groups']]
-        if rank in exist_ranks:
-            return False, '等级值参数已存在'
-        res = user_coll.update_one({'_id': self.main_account_id}, {
-            '$set': {
-                'own_roles.{0}.own_groups.{1}.rank'.format(role_name, old_group_name): rank
-            }
-        })
-        if res.modified_count or res.matched_count:
-            if old_group_name != new_group_name:
-                result = user_coll.update_one({'_id': self.main_account_id}, {
-                    '$rename': {
-                        'own_roles.{0}.own_groups.{1}'.format(role_name,
-                                                              old_group_name): 'own_roles.{0}.own_groups.{1}'.format(
-                            role_name, new_group_name)
-                    }
-                })
-                if result.modified_count:
-                    return True, ''
-                else:
-                    return False, '修改分组名称失败'
-            else:
-                return True, ''
-        else:
-            return False, '修改分组失败'
-
     def verify_permission(self, account_id):
         self.update()
         if self.is_main_account and not (
@@ -701,7 +617,7 @@ class PermissionInsufficientError(Exception):
     pass
 
 
-if __name__ == "__main__":
-    password = 'asdasd'
-    password = make_password(password)
-    print password
+
+
+
+

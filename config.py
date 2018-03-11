@@ -11,10 +11,10 @@ BIND_IP = "127.0.0.1"
 
 MONGO_USE_RS = True
 MONGO_RS_HOST_PORT = [
-    ("127.0.0.1", 27017)
+    ("192.168.1.149", 27017)
 ]
 
-MongodbHost = '127.0.0.1'
+MongodbHost = '192.168.1.149'
 MongodbPort = 27017
 MongodbAuthDb = "admin"
 MongodbUser = ''
@@ -63,7 +63,8 @@ ResourceOperationCollection = 'resource_operation'
 RentResourceCollection = 'rent_resource'
 
 
-permission_list = ['subAccountManage', 'businessManage', 'resourceManage', ]
+LOG_DIR = "./log"  # 日志目录
+LOG_FILE = 'gh-sdn-web.log'  # 日志文件
 
 
 ADMIN_SALT = ""
@@ -72,6 +73,10 @@ ONE_BUTTON_ONLINE_PWD = ""
 GT_ID = "80ae976be97d4b56ab1ab05d8ed89546"
 GT_KEY = "ec83a1fe5b0031515024b0c89dd72ba5"
 ASE_KEY = "37c8e37531ab907b845e9ca5"
+
+LogLevel = "ERROR"
+
+
 
 setting = {
     "cookie_secret": COOKIE_SECRET,
