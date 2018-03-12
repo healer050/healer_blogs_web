@@ -12,6 +12,7 @@ from models.account import Account,AccountNotExistError
 from libs.motor.base import BaseMotor
 
 class CmsIndexHandler(BaseHandler):
+    @authenticated
     @coroutine
     def get(self):
         self.render('cms/base.html')
@@ -24,8 +25,8 @@ class LoginHandler(BaseHandler):
         next_url = self.get_argument('next', '/cms/')
         self.set_cookie('_xsrf',self.xsrf_token)
         msg = ''
-        if next_url == '/user/logout':
-            next_url = '/cms/'
+        if next_url == '/cms/logout':
+            next_url = '/cms/login'
         self.render("cms/user_login.html",msg = msg,next_url=next_url)
 
     @coroutine

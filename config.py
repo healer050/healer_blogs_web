@@ -77,10 +77,9 @@ ASE_KEY = "37c8e37531ab907b845e9ca5"
 LogLevel = "ERROR"
 
 
-
 setting = {
     "cookie_secret": COOKIE_SECRET,
-    "login_url": "/login",
+    "login_url": "/cms/login",
     "xsrf_cookies": False,
     'gzip': True,
     'debug': DEBUG,
