@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    ul li{
+        list-style: none;
+    }
+    .red{
+        color: gray;
+        text-decoration: line-through;
+    }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <h1>任务列表</h1>
+        <p>任务总数：{{obj.length}}；还有：{{numss()}} 未完成；【 <span  @click="del()">完成</span> 】</p>
+        <ul>
+            <li v-for="(v,i) in obj">
+                <input type="checkbox" v-model="v.style">
+                <span v-if="v.edit" :class="v.style?'red':''" @click="edit(i)">{{v.title}}</span>
+                <input type="text" v-model="v.title" v-else @blur="edit(i)"></li>
+        </ul>
+        <input type="text" v-model="inputText"><button @click="add()">添加</button>
+
+
+
+
+
+
+
+    </div>
+    
+</body>
+</html>
+<script src="node_modules/vue/dist/vue.min.js"></script>
+<script>
+
+new Vue({
+
+    el:"#box",
+    data:{
+        obj:[
+            {title:"图片切割",edit:true,style:false},
+            {title:"原型编写",edit:true,style:false},
+            {title:"编写代码",edit:true,style:false},
+            {title:"测试用例",edit:true,style:false},
+        ],
+        inputText:"",
+        
+
+    },
+    methods:{
+        add(){
+            if(!this.inputText==""){
+                this.obj.push({title:this.inputText,edit:true,style:false});
+                this.inputText="";
+            }
+            
+        },
+        edit(i){
+            if(this.obj[i].style){
+                return;
+            }
+            this.obj[i].edit=!this.obj[i].edit;
+        },
+        numss(){
+            var num = 0;
+            for(var i=0;i<this.obj.length;i++){
+                if(this.obj[i].style==false){
+                    num++;
+                }
+            }
+            return num;
+            
+        },
+        del(){
+            var arr = this.obj;
+            this.obj=[];
+            for(var i=0;i<arr.length;i++){
+                if(arr[i].style==false){
+                    this.obj.push(arr[i]);
+                }
+            }
+        }
+        
+    }
+
+
+})
+
+
+
+</script>
